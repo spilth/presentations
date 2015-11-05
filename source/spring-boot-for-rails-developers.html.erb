@@ -1,0 +1,235 @@
+# Spring Boot for Rails Developers
+
+---
+class: top, center
+
+# Back in the day...
+
+<iframe width="640" height="480" src="https://www.youtube.com/embed/lrgFSTbE5n8" frameborder="0" allowfullscreen></iframe>
+
+---
+
+# Things I'm Assuming
+--
+
+- You're on a Mac
+--
+
+- You have a healthy and up to date install of [Homebrew](http://brew.sh/)
+  - Hint: Use `brew update` and `brew doctor`
+--
+
+- You're using a Java IDE that auto-import classes for you
+  - Hint: [IntelliJ IDEA](https://www.jetbrains.com/idea/) is awesome
+
+---
+
+#  Why should I use Spring Boot?
+
+--
+
+- I don't know
+--
+
+- I don't care
+--
+
+- Let's go learn how to be productive with Java and Spring Boot
+
+---
+
+# curl -sSL https://get.rvm.io | bash -s stable
+
+Download and install [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) for your operating system.
+
+---
+
+# gem install rake
+
+```sh
+$ brew install maven
+```
+
+---
+
+# gem install rails
+
+```sh
+$ brew tap pivotal/tap
+$ brew install springboot
+```
+
+---
+
+# rails new blog
+
+```sh
+$ spring init blog -d=web,data-jpa,h2,freemarker
+$ cd foo
+$ mvn dependency:resolve
+```
+
+---
+
+# Why all these extra dependencies?
+
+- You can build more than just web sites with Spring Boot
+- `web` is Spring MVC (web framework) & embedded Tomcat (application server)
+- `h2` is an in-memory database (approximate equivalent of SQLite)
+- `data-jpa` is like the class methods of an ActiveRecord model
+- `freemarker` is a templating engine
+
+---
+
+# rails s
+
+```sh
+$ mvn spring-boot:run
+```
+
+---
+
+# routes.rb
+
+Mapping a URL pattern/HTTP verb to a class's instance method is done by annotating a class with @Controller and annotating a public method with @RequestMapping.
+
+---
+
+# resources :photos
+
+```java
+@RequestMapping("/photos")
+public class PhotosController {
+    @RequestMapping(value = "/", method = RequestType.GET)
+    public String listPhotos() { ... }
+
+    @RequestMapping(value = "/new", method = RequestType.GET)
+    public String newPhoto() { ... }
+
+    @RequestMapping(value = "/", method = RequestType.POST)
+    public String createPhoto() { ... }
+
+    @RequestMapping(value = "/{photoId}", method = RequestType.GET)
+    public String showPhoto() { ... }
+
+    @RequestMapping(value = "/{photoId}/edit", method = RequestType.GET)
+    public String editPhoto() { ... }
+
+    @RequestMapping(value = "/{photoId}", method = RequestType.PUT)
+    public String updatePhoto() { ... }
+
+    @RequestMapping(value = "/", method = RequestType.DELETE)
+    public String deletePhoto() { ... }
+}
+```
+
+---
+
+# Ugh, really?
+
+You could give [Spring Composed](https://github.com/sbrannen/spring-composed) a try.
+
+---
+
+# rails generate scaffold Post title content:text
+
+---
+
+# rails generate model Post title content:text
+
+---
+
+# rails generate controller PostController
+
+---
+
+# Creating a View
+
+---
+
+# rake db:migrate
+
+---
+
+# Deploying to PWS
+
+---
+
+# rake spec
+
+---
+
+# development, test, production
+
+---
+
+# rails c
+
+---
+
+# Using PostgreSQL/MySQL in Production
+
+---
+
+# Including Bootstrap & jQuery
+
+---
+
+# Internationalization
+
+---
+
+# Controller Filters
+
+---
+
+# Devise et al.
+
+- Spring Security
+
+---
+
+# Rest APIs
+
+- Spring Data REST
+
+---
+
+# What's Missing?
+
+Things I haven't found yet:
+
+- an easier way to make CRUD controllers
+
+- an easier way to make forms
+- an easier way to generate models
+- no path/url_for
+
+---
+
+# General Advice
+
+- look for an auto-completed property in `application.properties` first
+- use Java Config, not XML
+- make sure you're looking at the current API
+- learn about the frequently used annotations
+
+---
+
+#  Plugs
+
+- [www.annotatedspring.com](http://www.annotatedspring.com/) - Spring Screencasts
+- [www.java-toolbox.com](http://www.java-toolbox.com/) - Java Libraries, Plug-ins and Tools
+- Hint: I'm ~~stealing from~~ inspired by the Ruby community
+
+---
+
+# Talk To Do
+
+- how to debug?
+  - navigating the landscape
+  - googling for stuff is hard
+  - so many versions, so many bad example
+- how do annotations work?
+- what is the overall landscape?
+- how to make links render in Remark?
