@@ -3,28 +3,23 @@
   <head>
     <title>Title</title>
     <meta charset="utf-8">
-    <style>
-      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
-      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
-      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
-
-      body { font-family: 'Droid Serif'; }
-      h1, h2, h3 {
-        font-family: 'Yanone Kaffeesatz';
-        font-weight: normal;
-      }
-      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-    </style>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:700|Oxygen:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/remark.css">
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
   </head>
   <body>
     <textarea id="source">
-      <%= yield %>
+<%= yield %>
     </textarea>
-    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
-    </script>
     <script>
     var slideshow = remark.create({
-     countIncrementalSlides: false
+      countIncrementalSlides: false,
+      highlightStyle: 'sunburst',
+      highlightLines: true,
+      highlightSpans: true,
+      navigation: {
+        scroll: false
+      }
     });
     </script>
   </body>

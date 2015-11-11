@@ -1,24 +1,17 @@
+name: title
+class: middle, center
+
 # Spring Boot for Rails Developers
 
----
-class: top, center
-
-# Back in the day...
-
-<iframe width="640" height="480" src="https://www.youtube.com/embed/lrgFSTbE5n8" frameborder="0" allowfullscreen></iframe>
+Brian Kelly
 
 ---
 
 # Things I'm Assuming
---
 
 - You're on a Mac
---
-
 - You have a healthy and up to date install of [Homebrew](http://brew.sh/)
   - Hint: Use `brew update` and `brew doctor`
---
-
 - You're using a Java IDE that auto-import classes for you
   - Hint: [IntelliJ IDEA](https://www.jetbrains.com/idea/) is awesome
 
@@ -26,33 +19,41 @@ class: top, center
 
 #  Why should I use Spring Boot?
 
---
-
 - I don't know
---
-
 - I don't care
---
-
 - Let's go learn how to be productive with Java and Spring Boot
 
 ---
 
-# curl -sSL https://get.rvm.io | bash -s stable
+# Java Version Manager?
 
-Download and install [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) for your operating system.
+Just download and install the [Java Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) for your OS.
+
+- Java is backward compatible: You can compile 1.3 through 1.8 code using the 1.8 SDK
+- You likely won't need to support multiple Java versions
+- You should be using the latest version of 8 anyways
+- There is no automated installer (license agreement required)
 
 ---
 
-# gem install rake
+# Rake?
+
+Use [Apache Maven](https://maven.apache.org) or [Gradle](http://gradle.org):
 
 ```sh
 $ brew install maven
+$ brew install gradle
 ```
+
+- Maven uses XML but has been around longer
+- Gradle doesn't use XML but hasn't been around as long
+- I currently prefer Maven
 
 ---
 
 # gem install rails
+
+Add the `pivotal` tap and install the [Spring Boot CLI](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#cli)
 
 ```sh
 $ brew tap pivotal/tap
@@ -69,6 +70,12 @@ $ cd foo
 $ mvn dependency:resolve
 ```
 
+- `blog` is the name of the project/directory
+- `-d` lets you add dependencies
+- Spring Boot CLI uses Maven by default
+- Add `--build gradle` to use Gradle instead
+- Use `spring help init` to learn more
+
 ---
 
 # Why all these extra dependencies?
@@ -78,20 +85,41 @@ $ mvn dependency:resolve
 - `h2` is an in-memory database (approximate equivalent of SQLite)
 - `data-jpa` is like the class methods of an ActiveRecord model
 - `freemarker` is a templating engine
+- Use `spring init --list` to see what else is available.
 
 ---
 
 # rails s
 
+Use the `spring-boot:run` goal provided by the Spring Maven/Gradle Plugin (already added by the `init` command)
+
 ```sh
 $ mvn spring-boot:run
 ```
+
+Then visit <http://localhost:8080/>
 
 ---
 
 # routes.rb
 
-Mapping a URL pattern/HTTP verb to a class's instance method is done by annotating a class with @Controller and annotating a public method with @RequestMapping.
+Mapping a URL pattern/HTTP verb to a class's instance method is done by annotating a class with `@Controller` and annotating a public method with `@RequestMapping`.
+
+```java
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class PagesController {
+    @RequestMapping("/")
+    public String home() {
+        return "home";
+    }
+}
+```
+
+- `@Controller` tells Spring to check this class for `RequestMappings`
+- [`@RequestMapping`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestMapping.html) associates a method with a path, HTTP verb, headers, params, etc.
 
 ---
 
@@ -131,19 +159,9 @@ You could give [Spring Composed](https://github.com/sbrannen/spring-composed) a 
 
 ---
 
-# rails generate scaffold Post title content:text
+# rails generate...
 
----
-
-# rails generate model Post title content:text
-
----
-
-# rails generate controller PostController
-
----
-
-# Creating a View
+Spring Boot doesn't have code generators. This is intentional.
 
 ---
 
@@ -157,9 +175,83 @@ You could give [Spring Composed](https://github.com/sbrannen/spring-composed) a 
 
 # rake spec
 
+To just run unit tests (using the [Maven Surefire Plugin](https://maven.apache.org/surefire/maven-surefire-plugin/)):
+
+```sh
+mvn test
+```
+
+To run unit tests and integration tests (using the [Maven Failsafe Plugin](https://maven.apache.org/surefire/maven-failsafe-plugin/)):
+
+```sh
+mvn verify
+```
+
 ---
 
-# development, test, production
+# Development, Test & Production
+
+- No intrinsic concept of these environments
+- Use [Spring Profiles](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html) to represent different environments
+- Create a property file for each environment:
+  - `application-development.propreties`
+  - `application-test.propreties`
+  - `application-production.propreties`
+- Specify the profile you want to use:
+  - `mvn spring-boot:run -D 
+  spring.profiles.active=development`
+
+---
+
+# Combine Maven & Spring Profiles
+
+`pom.xml` profiles section:
+
+```xml
+<profiles>
+    <profile>
+        <id>development</id>
+        <properties><spring.profiles.active>development</spring.profiles.active></properties>
+        <build><defaultGoal>clean spring-boot:run</defaultGoal></build>
+    </profile>
+    <profile>
+        <id>test</id>
+        <properties><spring.profiles.active>test</spring.profiles.active></properties>
+        <build><defaultGoal>clean verify</defaultGoal></build>
+    </profile>
+    <profile>
+        <id>production</id>
+        <properties><spring.active.profiles>production</spring.active.profiles></properties>
+        <build><defaultGoal>clean spring-boot:run</defaultGoal></build>
+    </profile>
+</profiles>
+```
+
+---
+
+# Combine Maven & Spring Profiles
+
+`pom.xml` build section:
+
+```xml
+<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>-Dspring.profiles.active=${spring.profiles.active}</jvmArguments>
+                </configuration>
+            </plugin>
+        </plugins>
+</build>
+```
+
+Now we can just run:
+
+```sh
+mvn -P development
+```
 
 ---
 
@@ -176,6 +268,14 @@ You could give [Spring Composed](https://github.com/sbrannen/spring-composed) a 
 ---
 
 # Internationalization
+
+- In `src/main/resources/application.properties` set your locale and auto-import [Spring template macros](http://docs.spring.io/autorepo/docs/spring/current/spring-framework-reference/html/view.html#views-form-macros):
+  - `spring.mvc.locale=en_US`
+  - `spring.freemarker.settings.auto_import=/spring.ftl as spring`
+- Create a `message_en_US.properties` in `src/main/resources`
+  - `site.title=Annotated Spring`
+- In your templates use the `message` macro
+  - `<@spring.message "site.tite" />`
 
 ---
 
@@ -200,7 +300,6 @@ You could give [Spring Composed](https://github.com/sbrannen/spring-composed) a 
 Things I haven't found yet:
 
 - an easier way to make CRUD controllers
-
 - an easier way to make forms
 - an easier way to generate models
 - no path/url_for
@@ -239,3 +338,10 @@ Things I haven't found yet:
 - how do annotations work?
 - what is the overall landscape?
 - how to make links render in Remark?
+
+---
+
+# Back in the day...
+
+<iframe width="640" height="480" src="https://www.youtube.com/embed/lrgFSTbE5n8" frameborder="0" allowfullscreen></iframe>
+
