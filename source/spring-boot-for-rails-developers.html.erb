@@ -10,6 +10,7 @@ Brian Kelly
 # Things I'm Assuming
 
 - You're on a Mac
+- You know Ruby on Rails
 - You have a healthy and up to date install of [Homebrew](http://brew.sh/)
   - Hint: Use `brew update` and `brew doctor`
 - You're using a Java IDE that auto-import classes for you
@@ -47,7 +48,6 @@ $ brew install gradle
 
 - Maven uses XML but has been around longer
 - Gradle doesn't use XML but hasn't been around as long
-- I currently prefer Maven
 
 ---
 
@@ -101,9 +101,20 @@ Then visit <http://localhost:8080/>
 
 ---
 
+# rails generate scaffold Post title content:string
+
+Spring Boot doesn't have code generators. This is intentional.
+
+> Absolutely no code generation and no requirement for XML configuration
+
+---
+
 # routes.rb
 
-Mapping a URL pattern/HTTP verb to a class's instance method is done by annotating a class with `@Controller` and annotating a public method with `@RequestMapping`.
+- There is no central place to define routes.
+- Mapping a URL pattern/HTTP verb to a class's instance method is done by:
+  - annotating a class with `@Controller`
+  - annotating a public method with `@RequestMapping`.
 
 ```java
 import org.springframework.stereotype.Controller;
@@ -123,7 +134,16 @@ public class PagesController {
 
 ---
 
+# path_for
+
+- There are no `path_for` or `url_for` helper methods.
+
+
+---
+
 # resources :photos
+
+--
 
 ```java
 @RequestMapping("/photos")
@@ -138,10 +158,10 @@ public class PhotosController {
     public String createPhoto() { ... }
 
     @RequestMapping(value = "/{photoId}", method = RequestType.GET)
-    public String showPhoto() { ... }
+    public String showPhoto(@PathVariable("photoId") Integer id, Model model) { ... }
 
     @RequestMapping(value = "/{photoId}/edit", method = RequestType.GET)
-    public String editPhoto() { ... }
+    public String editPhoto(@PathVariable("photoId") Integer id, Model model) { ... }
 
     @RequestMapping(value = "/{photoId}", method = RequestType.PUT)
     public String updatePhoto() { ... }
@@ -153,19 +173,183 @@ public class PhotosController {
 
 ---
 
+# rails generate controller PhotosController
+
+--
+
+> Absolutely no code generation and no requirement for XML configuration
+
+---
+
 # Ugh, really?
 
 You could give [Spring Composed](https://github.com/sbrannen/spring-composed) a try.
 
+This:
+
+```java
+@RequestMapping(method = GET, value = "/photos")
+```
+
+Becomes:
+
+```java
+@Get(value = "/photos")
+```
+
+Or just:
+
+```java
+@Get("/photos")
+```
+
 ---
 
-# rails generate...
+# rails g model Post title content:text
 
-Spring Boot doesn't have code generators. This is intentional.
+- Use [Spring Data JPA](http://projects.spring.io/spring-data-jpa/)
+- Model means something else in Spring-land
+  - It's what you pass to the view
+- Use `@Entity` on your "model" class
+
+```java
+@Entity(name = "categories")
+public class Category {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
+    private Long groupId;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoryId")
+    @Where(clause = "enabled = 1")
+    @OrderBy("name")
+    private Set<Project> projects;
+}
+```
+
+---
+# Model.find
+
+- Extend [CrudRepository](http://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/CrudRepository.html)
+
+```java
+public interface CategoriesRepository
+  extends CrudRepository<Category, Long> {
+}
+```
+
+```java
+@Controller
+@RequestMapping("/admin/categories")
+public class CategoriesAdminController {
+    @Autowired
+    private CategoriesRepository categoriesRepository;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String categoryIndex(Model model) {
+        model.addAttribute("categories",
+          categoriesRepository.findAll());
+
+        return "admin/categories/index";
+    }
+}
+```
+---
+
+# Model.where().order().limit()
+
+- Use [Spring Data JPA Query Methods](http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-creation)
+
+```java
+public interface CategoriesRepository
+  extends CrudRepository<Category, Long> {
+    List<Category> findAllByOrderByNameAsc();
+}
+```
+
+```java
+@Controller
+public class CategoriesController {
+    @Autowired
+    CategoriesRepository categoriesRepository;
+
+    @RequestMapping(
+      value = "/categories",
+      method = RequestMethod.GET)
+    public String categoryIndex(Model model) {
+        model.addAttribute("categories", categoriesRepository.findAllByOrderByNameAsc());
+        return "categories/index";
+    }
+}
+```
+---
+
+# model.valid?
+
+- Add a BindingResult in your controller's method
+- Use @Valid on your entity argument
+- Add validation annotations to your Entity
+- Check the BindingResult
+
+---
+
+# model.save
+
+- Use the CrudRepository you created
+
+---
+
+# Model.findOne()
+
+- Use the CrudRepository you created
+
+---
+
+# Model.findAllByTitle, etc.
+
+- Add query methods to your CrudRepository
+
+---
+
+# has_many :comments
 
 ---
 
 # rake db:migrate
+
+---
+
+# config.cache_classes=false
+
+---
+
+# Gemfile
+
+---
+
+# Rakefile
+
+---
+
+# Before/After Filters
+
+---
+
+# Model Hooks
+
+---
+
+# The Table
+
+| Rails | Spring |
+|-------|--------|
+| Controller      | Controller        |
+| - instance variables | - model |
+| Model | Entity |
+| Model query method | CrudRepository methods |
+
 
 ---
 
@@ -198,7 +382,7 @@ mvn verify
   - `application-test.propreties`
   - `application-production.propreties`
 - Specify the profile you want to use:
-  - `mvn spring-boot:run -D 
+  - `mvn spring-boot:run -D
   spring.profiles.active=development`
 
 ---
@@ -295,6 +479,14 @@ mvn -P development
 
 ---
 
+# How do I make a Gem?
+
+---
+
+# TDD & BDD
+
+---
+
 # What's Missing?
 
 Things I haven't found yet:
@@ -318,6 +510,13 @@ Things I haven't found yet:
 - use Java Config, not XML
 - make sure you're looking at the current API
 - learn about the frequently used annotations
+
+---
+
+# HELP!
+
+- [java-toolbox.com](http://www.java-toolbox.com/) - Java Libraries, Plug-ins and Tools
+- [Everyday Spring Boot Testing](https://github.com/spilth/everydayspringtesting)
 
 ---
 

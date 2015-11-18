@@ -15,3 +15,25 @@ a {
   color: #090;
 }
 
+table {
+  width: 100%
+}
+
+th {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+blockquote {
+  font-style: italic;
+  font-weight: normal;
+  color: #666;
+  border-left: 2px solid #666;
+  margin-left: 1em;
+  padding-left: 1em;
+}
+
+code {
+  background: #ddd;
+
+}
