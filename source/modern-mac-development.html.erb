@@ -1,0 +1,169 @@
+name: title
+class: middle, center
+
+# Modern Mac Development
+
+Brian Kelly
+
+---
+
+# Prerequisites
+
+- You're on a Mac
+- You have administrative rights on your machine
+- You have an App Store account
+- You've upgrade to [El Capitan](https://itunes.apple.com/us/app/os-x-el-capitan/id1018109117) from the App Store
+- You've installed [XCode 7 from the App Store](https://itunes.apple.com/us/app/xcode/id497799835) or [Downloads for Apple Developers](https://developer.apple.com/downloads/)
+
+---
+
+# Stop using the Mouse
+
+## To start Applications
+
+- Hold down the Command key (⌘) and press the space bar
+- Type the application you want to start
+- Press enter
+- Stop using the Dock (and the mouse)
+
+---
+
+# The XCode License
+
+## Agree To It
+
+XCode is an application that lets you build iOS applications. It also provides a lot of  tools for building all sorts of other applications.
+
+- Open Spotlight (⌘ Space), type `terminal` and press Return
+- In the Terminal window that pops up, type the following: `sudo xcodebuild -license`
+- It will ask for your password (the one you log into your computer with)
+- Press `q` to jump to the end of the license
+- Type `agree` and press return to agree to the license
+
+---
+
+# sudo WTF?
+
+`sudo` lets you run commands as another user. By default that user is `root`, which has access too all commands and files on the system.
+
+---
+
+# Use [Homebrew](http://brew.sh/)
+
+## To easily install stuff
+
+While you are developing software you will likely need to install a number of tools, frameworks and applications. The easiest way to do this is to use a package manager.
+
+- Open Spotlight (⌘ Space), type `terminal` and press Return
+- In the Terminal window that pops up, type the following: 
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+---
+
+# Keep Homebrew Happy
+
+Do this semi-regularly:
+
+- Keep Homebrew up to date: `brew update`
+- Keep Homebrew healthy: `brew doctor`
+  - This may give you some information to act on, which you should
+- Keep Homebrew slim: `brew cleanup`
+
+---
+
+# Use iTerm2
+
+## And install it using Homebrew
+
+- In your Terminal window type `brew cask install iterm2`
+- Then use Spotlight to start `iterm`
+
+---
+
+# Stop using the Mouse
+
+## To resize windows
+
+Use [ShiftIt](https://github.com/fikovnik/ShiftIt) to move and resize windows using the keyboard.
+
+```sh
+brew cask install shiftit
+```
+
+Then use Spotlight to start ShiftIt.
+
+---
+
+# Giving ShiftIt Permissions
+
+ShiftIt needs permission to control your computer. Let's give it that permission.
+
+1. Go to System Preferences > Security & Privacy > Privacy > Accessibility
+1. Click the lock to make changes (bottom-left corner) and enter your password
+1. In the right-hand pane called "Allow the apps below to control your computer." and check "ShiftIt"
+1. Start ShiftIt, it should work without any issue.
+
+These instructions come from <https://github.com/fikovnik/ShiftIt/issues/110#issuecomment-20834932>
+
+---
+
+## Bash Shell
+
+---
+
+# Stop typing commands over and over
+
+## Use shell command history
+
+---
+
+# Stop typing commands over and over
+
+## Use shell command search
+
+---
+
+# Install bash-it
+
+---
+
+# Use Homebrew to Install Stuff
+
+---
+
+# Use Version Managers for Programming Languages
+
+---
+
+# Use Dependency Management Tools
+
+---
+
+# Take Notes
+
+---
+
+# Use Shortcut Keys
+
+---
+
+# Use Time Boxing
+
+---
+
+# Use Google Chrome Profiles
+
+---
+
+## Resources
+
+- [The Productive Programmer](http://nealford.com/books/productiveprogrammer)
+- <https://xkcd.com/1319/>
+- <https://xkcd.com/1205/>
+- <http://i.imgur.com/Q8kV8.png>
+- <https://en.wikipedia.org/wiki/Dunning%E2%80%93Kruger_effect>
+
+
